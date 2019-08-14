@@ -13,10 +13,13 @@ PATH = os.path.realpath(os.path.abspath(__file__))
 sys.path.insert(0, os.path.dirname(os.path.dirname(PATH)))
 
 try:
-    import mock
+    try:
+        import unittest.mock as mock
+    except ImportError:
+        import mock
     from youtube_dl_gui.downloadmanager import DownloadList, synchronized
 except ImportError as error:
-    print error
+    print(error)
     sys.exit(1)
 
 

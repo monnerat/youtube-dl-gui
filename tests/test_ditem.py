@@ -8,6 +8,7 @@ from __future__ import unicode_literals
 import sys
 import os.path
 import unittest
+import six
 
 PATH = os.path.realpath(os.path.abspath(__file__))
 sys.path.insert(0, os.path.dirname(os.path.dirname(PATH)))
@@ -15,7 +16,7 @@ sys.path.insert(0, os.path.dirname(os.path.dirname(PATH)))
 try:
     from youtube_dl_gui.downloadmanager import DownloadItem
 except ImportError as error:
-    print error
+    print(error)
     sys.exit(1)
 
 
@@ -32,7 +33,7 @@ class TestItemInit(unittest.TestCase):
         self.assertEqual(ditem.stage, "Queued")
         self.assertEqual(ditem.url, url)
         self.assertEqual(ditem.options, options)
-        self.assertEqual(ditem.object_id, hash(url + unicode(options)))
+        self.assertEqual(ditem.object_id, hash(url + six.text_type(options)))
 
         self.assertEqual(ditem.path, "")
         self.assertEqual(ditem.filenames, [])

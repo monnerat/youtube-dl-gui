@@ -1,4 +1,3 @@
-#!/usr/bin/env python2
 # -*- coding: utf-8 -*-
 
 """Youtubedlg module responsible for handling the log stuff. """
@@ -6,6 +5,8 @@
 from __future__ import unicode_literals
 
 import os.path
+import six
+import codecs
 from time import strftime
 
 from .utils import (
@@ -64,7 +65,7 @@ class LogManager(object):
             data (string): String to write to the log file.
 
         """
-        if isinstance(data, basestring):
+        if isinstance(data, six.string_types):
             self._write(data + '\n', 'a')
 
     def _write(self, data, mode):
@@ -79,13 +80,14 @@ class LogManager(object):
         """
         check_path(self.config_path)
 
-        with open(self.log_file, mode) as log:
+        with open(self.log_file, mode + 'b') as f:
+            log = codecs.getwriter(self._encoding)(f, 'ignore')
             if mode == 'a' and self.add_time:
                 msg = self.TIME_TEMPLATE.format(time=strftime('%c'), error_msg=data)
             else:
                 msg = data
 
-            log.write(msg.encode(self._encoding, 'ignore'))
+            log.write(msg)
 
     def _init_log(self):
         """Initialize the log file if not exist. """

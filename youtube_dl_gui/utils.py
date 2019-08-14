@@ -1,4 +1,3 @@
-#!/usr/bin/env python2
 # -*- coding: utf-8 -*-
 
 """Youtubedlg module that contains util functions.
@@ -18,11 +17,12 @@ import json
 import math
 import locale
 import subprocess
+import six
 
 try:
     from twodict import TwoWayOrderedDict
 except ImportError as error:
-    print error
+    print(error)
     sys.exit(1)
 
 from .info import __appname__
@@ -64,11 +64,15 @@ def convert_item(item, to_unicode=False):
             types back to 'str'.
 
     """
-    if to_unicode and isinstance(item, str):
+    if isinstance(item, (bytes, bytearray)):
+        if not to_unicode:
+            return item
         # Convert str to unicode
         return item.decode(get_encoding(), 'ignore')
 
-    if not to_unicode and isinstance(item, unicode):
+    if isinstance(item, six.text_type):
+        if to_unicode:
+            return item
         # Convert unicode to str
         return item.encode(get_encoding(), 'ignore')
 
@@ -90,7 +94,7 @@ def convert_item(item, to_unicode=False):
 def convert_on_bounds(func):
     """Decorator to convert string inputs & outputs.
 
-    Covert string inputs & outputs between 'str' and 'unicode' at the
+    Convert string inputs & outputs between 'str' and 'unicode' at the
     application bounds using the preferred system encoding. It will convert
     all the string params (args, kwargs) to 'str' type and all the
     returned strings values back to 'unicode'.
@@ -106,7 +110,7 @@ def convert_on_bounds(func):
 
 # See: https://github.com/MrS0m30n3/youtube-dl-gui/issues/57
 # Patch os functions to convert between 'str' and 'unicode' on app bounds
-os_sep = unicode(os.sep)
+os_sep = six.text_type(os.sep)
 os_getenv = convert_on_bounds(os.getenv)
 os_makedirs = convert_on_bounds(os.makedirs)
 os_path_isdir = convert_on_bounds(os.path.isdir)

@@ -1,4 +1,3 @@
-#!/usr/bin/env python2
 # -*- coding: utf-8 -*-
 
 """Python module to download videos.
@@ -16,9 +15,10 @@ import sys
 import locale
 import signal
 import subprocess
+import six
 
 from time import sleep
-from Queue import Queue
+from six.moves.queue import Queue
 from threading import Thread
 
 from .utils import convert_item
@@ -58,9 +58,11 @@ class PipeReader(Thread):
 
         while self._running:
             if self._filedescriptor is not None:
-                for line in iter(self._filedescriptor.readline, str('')):
+                for line in iter(self._filedescriptor.readline, b''):
+                    if len(line) == 0:
+                        break
                     # Ignore ffmpeg stderr
-                    if str('ffmpeg version') in line:
+                    if b'ffmpeg version' in line:
                         ignore_line = True
 
                     if not ignore_line:
@@ -111,7 +113,7 @@ class YoutubeDLDownloader(object):
             from downloaders import YoutubeDLDownloader
 
             def data_hook(data):
-                print data
+                print(data)
 
             downloader = YoutubeDLDownloader('/usr/bin/youtube-dl', data_hook)
 
@@ -177,8 +179,10 @@ class YoutubeDLDownloader(object):
         # Read stderr after download process has been completed
         # We don't need to read stderr in real time
         while not self._stderr_queue.empty():
-            stderr = self._stderr_queue.get_nowait().rstrip()
-            stderr = convert_item(stderr, to_unicode=True)
+            stderr = self._stderr_queue.get_nowait()
+            if len(stderr) == 0:
+                break
+            stderr = convert_item(stderr.rstrip(), to_unicode=True)
 
             self._log(stderr)
 

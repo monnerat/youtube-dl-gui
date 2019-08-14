@@ -8,16 +8,20 @@ from __future__ import unicode_literals
 import sys
 import os.path
 import unittest
+import six
 
 PATH = os.path.realpath(os.path.abspath(__file__))
 sys.path.insert(0, os.path.dirname(os.path.dirname(PATH)))
 
 try:
-    import mock
+    try:
+        import unittest.mock as mock
+    except ImportError:
+        import mock
 
     from youtube_dl_gui import utils
 except ImportError as error:
-    print error
+    print(error)
     sys.exit(1)
 
 
@@ -118,16 +122,16 @@ class TestConvertItem(unittest.TestCase):
 
     def setUp(self):
         self.input_list_u = ["v1", "v2", "v3"]
-        self.input_list_s = [str("v1"), str("v2"), str("v3")]
+        self.input_list_s = [b"v1", b"v2", b"v3"]
 
         self.input_tuple_u = ("v1", "v2", "v3")
-        self.input_tuple_s = (str("v1"), str("v2"), str("v3"))
+        self.input_tuple_s = (b"v1", b"v2", b"v3")
 
         self.input_dict_u = {"k1": "v1", "k2": "v2"}
-        self.input_dict_s = {str("k1"): str("v1"), str("k2"): str("v2")}
+        self.input_dict_s = {b"k1": b"v1", b"k2": b"v2"}
 
     def check_iter(self, iterable, iter_type, is_unicode):
-        check_type = unicode if is_unicode else str
+        check_type = six.text_type if is_unicode else bytes
 
         iterable = utils.convert_item(iterable, is_unicode)
 
@@ -140,16 +144,16 @@ class TestConvertItem(unittest.TestCase):
             self.assertIsInstance(item, check_type)
 
     def test_convert_item_unicode_str(self):
-        self.assertIsInstance(utils.convert_item("test"), str)
+        self.assertIsInstance(utils.convert_item("test"), bytes)
 
     def test_convert_item_unicode_unicode(self):
-        self.assertIsInstance(utils.convert_item("test", True), unicode)
+        self.assertIsInstance(utils.convert_item("test", True), six.text_type)
 
     def test_convert_item_str_unicode(self):
-        self.assertIsInstance(utils.convert_item(str("test"), True), unicode)
+        self.assertIsInstance(utils.convert_item(b"test", True), six.text_type)
 
     def test_convert_item_str_str(self):
-        self.assertIsInstance(utils.convert_item(str("test")), str)
+        self.assertIsInstance(utils.convert_item(b"test"), bytes)
 
     def test_convert_item_list_empty(self):
         self.assertEqual(len(utils.convert_item([])), 0)

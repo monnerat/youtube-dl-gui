@@ -1,4 +1,3 @@
-#!/usr/bin/env python
 # -*- coding: UTF-8 -*-
 
 from __future__ import unicode_literals
@@ -8,7 +7,7 @@ import sys
 try:
     import wx
 except ImportError as error:
-    print error
+    print(error)
     sys.exit(1)
 
 
@@ -136,10 +135,9 @@ class ListBoxWithHeaders(wx.ListBox):
     # wx.ItemContainer methods
 
     def Append(self, string):
-        super(ListBoxWithHeaders, self).Append(self._add_prefix(string))
+        super(ListBoxWithHeaders, self).Append(string)
 
     def AppendItems(self, strings):
-        strings = [self._add_prefix(string) for string in strings]
         super(ListBoxWithHeaders, self).AppendItems(strings)
 
     def Clear(self):
@@ -178,7 +176,7 @@ class ListBoxPopup(wx.PopupTransientWindow):
     """ListBoxWithHeaders as a popup.
 
     This class uses the wx.PopupTransientWindow to create the popup and the
-    API is based on the wx.combo.ComboPopup class.
+    API is based on the wx.ComboPopup class.
 
     Attributes:
         EVENTS_TABLE (dict): Dictionary that contains all the events
@@ -219,7 +217,7 @@ class ListBoxPopup(wx.PopupTransientWindow):
     def OnDismiss(self):
         wx.PostEvent(self, self.EVENTS_TABLE["EVT_COMBOBOX_CLOSEUP"])
 
-    # wx.combo.ComboPopup methods
+    # wx.ComboPopup methods
 
     def Init(self):
         self.value = self.curitem = -1

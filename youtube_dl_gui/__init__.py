@@ -1,4 +1,3 @@
-#!/usr/bin/env python2
 # -*- coding: utf-8 -*-
 
 """Youtubedlg __init__ file.
@@ -23,7 +22,7 @@ import os.path
 try:
     import wx
 except ImportError as error:
-    print error
+    print(error)
     sys.exit(1)
 
 __packagename__ = "youtube_dl_gui"
@@ -69,7 +68,11 @@ if opt_manager.options['enable_log']:
 locale_dir = get_locale_file()
 
 try:
-    gettext.translation(__packagename__, locale_dir, [opt_manager.options['locale_name']]).install(unicode=True)
+    trans = gettext.translation(__packagename__, locale_dir, [opt_manager.options['locale_name']])
+    try:
+        trans.install(unicode=True)
+    except TypeError:
+        trans.install()
 except IOError:
     opt_manager.options['locale_name'] = 'en_US'
     gettext.install(__packagename__)

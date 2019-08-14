@@ -1,4 +1,3 @@
-#!/usr/bin/env python2
 # -*- coding: utf-8 -*-
 
 """Youtubedlg module for managing the download process.
@@ -23,6 +22,7 @@ from __future__ import unicode_literals
 
 import time
 import os.path
+import six
 
 from threading import (
     Thread,
@@ -31,7 +31,6 @@ from threading import (
 )
 
 from wx import CallAfter
-from wx.lib.pubsub import setuparg1
 from wx.lib.pubsub import pub as Publisher
 
 from .parsers import OptionsParser
@@ -166,7 +165,7 @@ class DownloadItem(object):
             if key in self.progress_stats:
                 value = stats_dict[key]
 
-                if not isinstance(value, basestring) or not value:
+                if not isinstance(value, six.string_types) or not value:
                     self.progress_stats[key] = self.default_values[key]
                 else:
                     self.progress_stats[key] = value
@@ -380,7 +379,7 @@ class DownloadManager(Thread):
         # Init the custom workers thread pool
         log_lock = None if log_manager is None else Lock()
         wparams = (opt_manager, self._youtubedl_path(), log_manager, log_lock)
-        self._workers = [Worker(*wparams) for _ in xrange(opt_manager.options["workers_number"])]
+        self._workers = [Worker(*wparams) for _ in range(opt_manager.options["workers_number"])]
 
         self.start()
 
@@ -502,7 +501,7 @@ class DownloadManager(Thread):
                     downloads using the active() method.
 
         """
-        CallAfter(Publisher.sendMessage, MANAGER_PUB_TOPIC, data)
+        CallAfter(Publisher.sendMessage, MANAGER_PUB_TOPIC, msg=data)
 
     def _check_youtubedl(self):
         """Check if youtube-dl binary exists. If not try to download it. """
@@ -755,5 +754,5 @@ class Worker(Thread):
         if signal == 'receive':
             self._wait_for_reply = True
 
-        CallAfter(Publisher.sendMessage, WORKER_PUB_TOPIC, (signal, data))
+        CallAfter(Publisher.sendMessage, WORKER_PUB_TOPIC, msg=(signal, data))
 
