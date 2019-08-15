@@ -7,8 +7,8 @@ A cross platform front-end GUI of the popular [youtube-dl](https://rg3.github.io
 ![youtube-dl-gui main window](https://raw.githubusercontent.com/MrS0m30n3/youtube-dl-gui/gh-pages/images/ydlg_ui.gif)
 
 ## Requirements
-* [Python 2.7.3+](https://www.python.org/downloads)
-* [wxPython 3](https://wxpython.org/download.php)
+* [Python 2.7.3+ or 3+](https://www.python.org/downloads)
+* [wxPython 3 or 4](https://wxpython.org/download.php)
 * [TwoDict](https://pypi.python.org/pypi/twodict)
 * [GNU gettext](https://www.gnu.org/software/gettext/) (to build the package)
 * [FFmpeg](https://ffmpeg.org/download.html) (optional, to post process video files)
